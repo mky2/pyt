@@ -1,5 +1,5 @@
 from typing import List
-from pikepdf import Pdf, Page
+from pikepdf import Pdf, Page, OutlineItem
 from .outline import OutlineData
 
 
@@ -12,8 +12,7 @@ def fix_toc(input: str, output: str, js: str):
         pdf.save(output)
 
 
-def _update_item(item: OutlineData):
-    # outline_info = OutlineInfo(item.title, item.destination[0])
+def _update_item(item: OutlineItem):
     if item.action and "/D" in item.action:
         dest = Page(item.action["/D"][0]).label
     elif item.destination:
@@ -22,11 +21,10 @@ def _update_item(item: OutlineData):
         children = [_update_item(child) for child in item.children]
     else:
         children = None
-    # print(dest)
     return OutlineData(item.title, dest, children)
 
 
-def fix_width(input, output):
+def fix_width(input: str, output: str):
     with Pdf.open(input) as pdf:
         with pdf.open_outline() as outline:
             updated_items = [_update_item(i).create(pdf) for i in outline.root]

@@ -4,6 +4,7 @@ from .main import fix_toc, fix_width
 
 app = typer.Typer()
 
+
 @app.command()
 def add(input: str, json: str, output: Optional[str] = None):
     if output == None:
